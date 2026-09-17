@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Everslim — Weight Management Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#CB4AA2; --pink-dark:#A9337F; --chartreuse:#E0E32D; --mint:#BCEBD2;
+    --ink:#02433E; --ink-soft:#5C7C77; --bg:#FFFFFF; --border:#D8D8D6;
+    --red:#B3261E; --red-bg:#FDECEC; --red-border:#F3C2BE;
+    --amber:#8A6A00; --amber-bg:#FFF8E1; --amber-border:#EFDD9A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Inter', Arial, Helvetica, sans-serif;background:var(--bg);color:var(--ink);}
+  .stage{max-width:640px;margin:0 auto;padding:28px 24px 60px;min-height:100vh;display:flex;flex-direction:column;}
+
+  .stage-indicator{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px;}
+  .stage-pill{
+    font-family:'Inter',sans-serif;font-size:11.5px;font-weight:700;
+    padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .stage-pill.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .stage-pill.done{border-color:var(--ink);color:var(--ink);}
+  .stage-line{flex:0 0 14px;height:1.5px;background:var(--border);}
+
+  .progress-line{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    font-family:'Fraunces', Georgia, serif;font-weight:700;font-size:13px;color:var(--ink-soft);margin-bottom:28px;
+  }
+  .progress-line .inf{color:var(--chartreuse);font-size:15px;}
+
+  .question-block{flex:1;}
+  .question-block h1{font-family:'Fraunces', Georgia, serif;font-weight:700;font-size:30px;line-height:1.18;color:var(--ink);margin:0 0 8px;}
+  .question-hint{font-size:13.5px;color:var(--ink-soft);margin:0 0 20px;}
+  .key-copy{background:#F7F5EF;border:1px solid var(--border);border-radius:12px;padding:16px 18px;font-size:13.5px;color:var(--ink-soft);margin:14px 0 22px;}
+
+  .choose-label{font-family:'Fraunces', Georgia, serif;font-weight:700;font-size:17px;color:var(--ink);margin:22px 0 12px;}
+  .option-list{display:flex;flex-direction:column;gap:12px;margin-bottom:8px;}
+  .option-btn{
+    display:block;width:100%;text-align:left;font-family:'Fraunces', Georgia, serif;
+    font-size:16px;font-weight:600;color:var(--ink);background:#fff;border:2px solid var(--border);
+    border-radius:14px;padding:14px 18px;cursor:pointer;transition:border-color .15s, background .15s;
+  }
+  .option-btn:hover{border-color:var(--ink-soft);}
+  .option-btn.selected{border-color:var(--ink);}
+  .option-btn.multi.selected{background:#FBEBF5;border-color:var(--pink);}
+  .capture-btn{
+    display:block;width:100%;text-align:center;font-family:'Fraunces', Georgia, serif;
+    font-size:16px;font-weight:600;color:var(--ink);background:#fff;border:2px solid var(--border);
+    border-radius:14px;padding:14px 18px;cursor:pointer;
+  }
+  .capture-btn:hover{border-color:var(--ink-soft);}
+
+  input[type=text], input[type=date], input[type=number], input[type=tel], input[type=email], input[type=file], textarea, select{
+    width:100%;font-family:inherit;font-size:15px;padding:11px 12px;border:2px solid var(--border);
+    border-radius:10px;background:#fff;color:var(--ink);
+  }
+  textarea{resize:vertical;min-height:90px;font-family:'Inter',sans-serif;}
+  input:focus, textarea:focus, select:focus{outline:none;border-color:var(--ink);}
+
+  .group-field{margin:18px 0;}
+  .group-field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px;}
+  .group-field .subhint{font-size:12px;color:var(--ink-soft);margin-top:5px;}
+
+  .tri-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
+  .tri-row:last-child{border-bottom:none;}
+  .tri-row .tri-label{font-size:13.5px;font-weight:600;color:var(--ink);flex:1;}
+  .tri-btns{display:flex;gap:6px;flex-shrink:0;}
+  .tri-btn{font-family:'Inter',sans-serif;font-size:12px;font-weight:700;padding:7px 12px;border-radius:16px;border:1.5px solid var(--border);background:#fff;color:var(--ink-soft);cursor:pointer;}
+  .tri-btn.selected{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  .inline-yesno{display:flex;gap:8px;margin-top:8px;}
+  .inline-btn{font-family:'Inter',sans-serif;font-size:13px;font-weight:700;padding:9px 16px;border-radius:18px;border:1.5px solid var(--border);background:#fff;color:var(--ink-soft);cursor:pointer;}
+  .inline-btn.selected{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  .info-card{background:#F7F5EF;border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin:18px 0;}
+  .info-card .bmi-value{font-family:'Fraunces',serif;font-size:40px;font-weight:700;color:var(--ink);margin:6px 0;}
+  .info-card .bmi-cat{display:inline-block;background:var(--chartreuse);color:var(--ink);font-weight:700;font-size:12px;padding:4px 12px;border-radius:20px;}
+
+  .exit-card{background:var(--red-bg);border:1px solid var(--red-border);border-radius:14px;padding:22px;margin:16px 0;}
+  .exit-card.neutral{background:#F7F5EF;border-color:var(--border);}
+  .exit-card p{margin:0;font-size:14px;color:var(--red);font-weight:600;line-height:1.55;}
+  .exit-card.neutral p{color:var(--ink-soft);font-weight:400;}
+  .crisis-box{background:#fff;border:1px solid var(--red-border);border-radius:10px;padding:14px 16px;margin-top:14px;font-size:13px;color:var(--ink);}
+  .crisis-box strong{display:block;margin-bottom:4px;color:var(--red);}
+
+  .amber-tag{display:inline-block;background:var(--amber-bg);border:1px solid var(--amber-border);color:var(--amber);font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;margin-bottom:10px;}
+
+  .review-section{border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+  .review-section .rs-head{display:flex;align-items:center;justify-content:space-between;}
+  .review-section .rs-head h3{font-family:'Fraunces',serif;font-size:15.5px;margin:0;color:var(--ink);}
+  .review-section .rs-edit{font-size:12px;font-weight:700;color:var(--pink-dark);background:none;border:none;cursor:pointer;}
+  .review-section .rs-body{font-size:12.5px;color:var(--ink-soft);margin-top:8px;line-height:1.6;}
+
+  .actions{margin-top:30px;}
+  .next-btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:17px 20px;border:none;
+    border-radius:32px;cursor:pointer;font-family:'Fraunces', Georgia, serif;font-weight:700;font-size:17px;color:var(--ink);
+    background:linear-gradient(90deg, var(--mint) 0%, var(--chartreuse) 18%, var(--chartreuse) 82%, #F3B6DD 100%);
+  }
+  .next-btn:disabled{background:#EDECE7;color:#A8A49A;cursor:not-allowed;}
+  .next-btn.secondary{background:#fff;border:2px solid var(--ink);color:var(--ink);margin-top:12px;}
+  .prev-link{display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-family:'Fraunces', Georgia, serif;font-weight:700;font-size:14px;color:var(--ink);background:none;border:none;cursor:pointer;padding:0;}
+  .prev-link[hidden]{display:none;}
+
+  .welcome-screen h1{font-size:34px;}
+  .welcome-cta-list{display:flex;flex-direction:column;gap:12px;margin-top:26px;}
+
+  .final-screen{text-align:center;padding-top:60px;}
+  .final-screen h1{font-family:'Fraunces',serif;font-size:28px;color:var(--ink);}
+  .final-screen p{font-size:14px;color:var(--ink-soft);max-width:440px;margin:14px auto 0;}
+  [hidden]{display:none !important;}
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+  <div class="stage-indicator" id="stageIndicator"></div>
+  <div class="progress-line" id="progressLine"><span class="inf">∞</span><span id="progressText">0% Complete</span><span class="inf">∞</span></div>
+  <div class="question-block" id="questionBlock"></div>
+  <div class="actions" id="actionsBlock">
+    <button type="button" class="next-btn" id="nextBtn" disabled>Next →</button>
+    <button type="button" class="prev-link" id="prevBtn"><span>←</span> Previous Question</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const YESNO = [{v:'yes',l:'Yes'},{v:'no',l:'No'}];
+  const YESNONA = [{v:'yes',l:'Yes'},{v:'no',l:'No'},{v:'na',l:'Not applicable'}];
+  const PHQ_SCALE = [{v:'0',l:'0 — Not at all'},{v:'1',l:'1 — Several days'},{v:'2',l:'2 — More than half the days'},{v:'3',l:'3 — Nearly every day'}];
+  const STAGES = [{n:1,label:'About you'},{n:2,label:'Your health'},{n:3,label:'Review'}];
+
+  const MEDICAL_HISTORY = [
+    {v:'dyslipidaemia',l:'Dyslipidaemia or high cholesterol'},
+    {v:'osa',l:'Obstructive sleep apnoea'},{v:'cvd',l:'Cardiovascular disease (including hypertension)'},
+    {v:'pancreatitis',l:'Pancreatitis'},{v:'gallstones',l:'Gallstones or gallbladder disease'},
+    {v:'gastroparesis',l:'Severe gastrointestinal disease or gastroparesis'},
+    {v:'severe_abdo_pain',l:'Severe or persistent abdominal pain'},{v:'vomiting_dehydration',l:'Repeated vomiting, severe diarrhoea or dehydration'},
+    {v:'visual_symptoms',l:'Sudden or rapidly worsening visual symptoms'},
+    {v:'diabetes_type',l:'Diabetes (including prediabetes, or insulin/sulfonylurea use)'},
+    {v:'hypoglycaemia',l:'Hypoglycaemia'},{v:'retinopathy',l:'Diabetic retinopathy or visual changes'},
+    {v:'kidney_liver',l:'Kidney or liver disease'},{v:'thyroid_endocrine',l:'Thyroid or endocrine disease'},
+    {v:'men2_mtc',l:'Personal or family history of medullary thyroid carcinoma or MEN2'},
+    {v:'active_cancer',l:'Active cancer or cancer treatment'},
+    {v:'bariatric_surgery',l:'Previous bariatric or gastrointestinal surgery'},
+    {v:'malabsorption',l:'Malabsorption or nutritional deficiency'},{v:'frailty',l:'Frailty or major mobility problems'},
+    {v:'planned_procedure',l:'Planned surgery, endoscopy or deep sedation'},{v:'unexplained_loss',l:'Unexplained recent weight loss'},
+    {v:'eating_concerns',l:'History of eating disorders, difficulties with eating patterns, or body image concerns'},
+    {v:'mood_concerns',l:'History of anxiety, depression, low mood or low energy'},
+    {v:'other',l:'Another weight-related condition'},
+    {v:'none',l:'None of the above'}
+  ];
+
+  const ETHNICITY_OPTIONS = ['White British','White — other background','Mixed / Multiple ethnic groups','Asian or Asian British','Black African, Caribbean or Black British','Chinese','Other ethnic group','Prefer not to say'];
+  const SOURCE_OPTIONS = ['Home scales / tape measure','Pharmacy or clinic measurement','GP or NHS record','Other'];
+  const MEDICINE_OPTIONS = ['Saxenda® (liraglutide)','Wegovy® (semaglutide)','Mounjaro® (tirzepatide)','Orlistat','Orforglipron','No preference'];
+  const TREATMENT_PRODUCTS = [
+    {v:'saxenda', l:'Saxenda® (liraglutide)', price:'£189 / month'},
+    {v:'wegovy', l:'Wegovy® (semaglutide)', price:'£179 / month'},
+    {v:'mounjaro', l:'Mounjaro® (tirzepatide)', price:'£169 / month'},
+    {v:'orlistat', l:'Orlistat', price:'£45 / month'},
+    {v:'orforglipron', l:'Orforglipron', price:'£179 / month'}
+  ];
+
+  const EXIT = {
+    ageRestricted: {title:"This service isn't available to you yet", body:"This weight-management pathway is only available to people aged 18 to 75. Please speak to your GP about options suitable for your age group.", ctas:[{label:'Exit assessment', action:'restart'}]},
+    ageRestrictedConfirm: {title:"Please check your date of birth", body:"Based on the date of birth you've entered, you'd be under 18. If that was a typo, go back and correct it — otherwise, this pathway isn't available to you yet.", ctas:[{label:'Edit date of birth', action:'editDob'},{label:"Yes, that's correct", action:'confirmAgeExit'}]},
+    ageRestrictedOver: {title:"This service isn't available to you yet", body:"This weight-management pathway is only available to people aged 18 to 75. Please speak to your GP about options suitable for your age group.", ctas:[{label:'Exit assessment', action:'restart'}]},
+    ageRestrictedConfirmOver: {title:"Please check your date of birth", body:"Based on the date of birth you've entered, you'd be over 75. If that was a typo, go back and correct it — otherwise, this pathway isn't currently available to you.", ctas:[{label:'Edit date of birth', action:'editDob'},{label:"Yes, that's correct", action:'confirmAgeExitOver'}]},
+    jurisdiction: {title:"This service is only available in the UK", body:"We're only able to offer this assessment to people currently in the UK. Please contact a local healthcare provider for support.", ctas:[{label:'Exit assessment', action:'restart'}]},
+    noConsent: {title:"We're not able to continue", body:"A safe remote assessment can't be completed without your consent to clinical assessment. You're welcome to return and start again at any time, or speak to your GP directly.", ctas:[{label:'Exit assessment', action:'restart'}]},
+    notForSelf: {title:"This pathway is for the patient themselves", body:"This online assessment can only be completed by the person who will be receiving treatment. If you're helping someone else, please contact us directly so we can arrange the right kind of support for them.", ctas:[{label:'Exit assessment', action:'restart'}]},
+    notEligibleBmi: {title:"You don't currently meet the BMI criteria for this pathway", body:"Based on the measurements entered, you don't currently meet the usual licensed BMI criteria for these medicines through this service.", ctas:[{label:'View other weight-management support', action:'restart'},{label:'Speak to my GP', action:'restart'},{label:'Exit assessment', action:'restart'}]},
+    notEligibleComorbid: {title:"You don't currently meet the criteria for this pathway", body:"Because your BMI is between 27 and 30, this pathway requires a qualifying weight-related health condition. Based on your answers, we're not able to continue through this route today.", ctas:[{label:'View other weight-management support', action:'restart'},{label:'Speak to my GP', action:'restart'},{label:'Exit assessment', action:'restart'}]},
+    pancreatitisContraindication: {title:"GLP-1 medicines aren't suitable for you", body:"A history of pancreatitis is an absolute contraindication to GLP-1 medicines (such as Wegovy, Saxenda, Mounjaro), and this can't be prescribed off-protocol under any circumstances. Alternatives such as orlistat may still be appropriate — a member of our clinical team will be in touch to discuss your options. If you have current symptoms of pancreatitis, please seek urgent medical attention.", ctas:[{label:'Exit assessment', action:'restart'}]},
+    men2Contraindication: {title:"GLP-1 medicines aren't suitable for you", body:"A personal or family history of medullary thyroid carcinoma or MEN2 is an absolute contraindication to GLP-1 medicines, with no exceptions. A member of our clinical team will be in touch to discuss alternative options with you.", ctas:[{label:'Exit assessment', action:'restart'}]},
+    type1DiabetesReferral: {title:"This service can't prescribe for you today", body:"GLP-1 medicines aren't licensed for type 1 diabetes, and prescribing here would need input from an endocrinologist first, which this service doesn't provide. Please speak to your diabetes team or GP about weight-management options suitable alongside type 1 diabetes.", ctas:[{label:'Exit assessment', action:'restart'}]},
+    urgentMedical: {title:"Please seek urgent medical advice", body:"Based on your answers, we recommend you speak to a doctor or call NHS 111 before continuing with this assessment. Severe abdominal pain, repeated vomiting or dehydration, and sudden visual symptoms all need to be checked by a clinician.", ctas:[{label:'Exit assessment', action:'restart'}], urgent:true},
+    seriousAllergy: {title:"We need to review this with you directly", body:"You've told us about a previous serious reaction to a medicine. A prescriber will need to review this with you personally before any treatment can be considered, so we're pausing the automated assessment here.", ctas:[{label:'Exit assessment — a prescriber will be in touch', action:'restart'}]},
+    pregnancy: {title:"This pathway isn't suitable during pregnancy", body:"These medicines should not be used during pregnancy, so we're not able to continue with this assessment. Please speak to your GP or midwife about safe options.", ctas:[{label:'Exit assessment', action:'restart'}]},
+    breastfeeding: {title:"This pathway isn't suitable while breastfeeding", body:"Safety hasn't been established for these medicines while breastfeeding, so we're not able to continue with this assessment. Please speak to your GP about safe options.", ctas:[{label:'Exit assessment', action:'restart'}]},
+    eatingDisorderActive: {title:"Let's get you the right support first", body:"Based on your answers, this pathway isn't the right next step for you today. Weight-management medicines aren't suitable where there are current eating-disorder behaviours. We'd like to help you access the right support instead.", ctas:[{label:'Speak to my GP', action:'restart'},{label:'Exit assessment', action:'restart'}], crisis:false},
+    selfHarmUrgent: {title:"We're concerned about you and want to help", body:"Thank you for telling us. Because of what you've shared, we're not able to continue with this automated assessment — this needs a real conversation with someone who can support you properly.", ctas:[{label:'Exit assessment', action:'restart'}], crisis:true},
+    immediateDanger: {title:"Your safety matters most right now", body:"You've told us you don't currently feel safe. Please reach out for support right away using the details below.", ctas:[{label:'Exit assessment', action:'restart'}], crisis:true},
+    safeguardingConcern: {title:"We need to speak with you directly", body:"Based on what you've told us, this isn't something an automated assessment can safely take further. A member of our clinical team needs to speak with you personally before we can continue.", ctas:[{label:'Exit assessment', action:'restart'}], crisis:true}
+  };
+
+  function heightCmValue(a){
+    if ((a.height_unit || 'cm') === 'cm') return parseFloat(a.heightCm) || null;
+    const ft = parseFloat(a.height_ft) || 0, inch = parseFloat(a.height_in) || 0;
+    if (!ft && !inch) return null;
+    return (ft * 12 + inch) * 2.54;
+  }
+  function weightKgValue(a){
+    if ((a.weight_unit || 'kg') === 'kg') return parseFloat(a.weightKg) || null;
+    const st = parseFloat(a.weight_st) || 0, lb = parseFloat(a.weight_lb) || 0;
+    if (!st && !lb) return null;
+    return (st * 14 + lb) * 0.453592;
+  }
+  function bmiOf(a){
+    const h = heightCmValue(a), w = weightKgValue(a);
+    if (!h || !w) return null;
+    const m = h/100;
+    return w/(m*m);
+  }
+  function bmiBand(a){
+    const b = bmiOf(a);
+    if (b === null) return null;
+    if (b >= 30) return 'high';
+    if (b >= 27) return 'mid';
+    return 'low';
+  }
+
+  function isNewToEverslim(a){
+    if (a.pathway_choice === 'new' || a.pathway_choice === 'transferring') return true;
+    if ((a.pathway_choice === 'restarting' || a.pathway_choice === 'switching') && a.has_account_check === 'no') return true;
+    return false;
+  }
+  function isReturningToEverslim(a){
+    if (a.pathway_choice === 'continuing') return true;
+    if ((a.pathway_choice === 'restarting' || a.pathway_choice === 'switching') && a.has_account_check === 'yes') return true;
+    return false;
+  }
+
+  const STAGE1_STEPS = [
+    {id:'welcome', stage:1, type:'welcome'},
+    {id:'dob_check', stage:1, type:'group', q:"Let's start with a few basics", fields:[
+      {id:'fullName', label:'Full name', type:'text', required:true},
+      {id:'dob', label:'Date of birth', type:'date', required:true},
+      {id:'nhs_number', label:'NHS number, if available', type:'text', required:false}
+    ]},
+    {id:'pathway_choice', stage:1, type:'radio', q:"Which best describes you?", options:[
+      {v:'new', l:"I've never used a weight-management medicine"},
+      {v:'continuing', l:"I'm currently using one from Everslim (returning patient)"},
+      {v:'restarting', l:'I previously used one but stopped, and want to restart'},
+      {v:'transferring', l:"I'm using one from another provider and want to transfer"},
+      {v:'switching', l:'I want to switch to a different medicine'}
+    ], required:true},
+    {id:'has_account_check', stage:1, type:'radio', q:"Do you already have an Everslim account?", options:YESNO, required:true, condition:a=>a.pathway_choice==='restarting' || a.pathway_choice==='switching'},
+    {id:'login_group', stage:1, type:'group', q:"Log in to your Everslim account", condition:isReturningToEverslim, fields:[
+      {id:'loginEmail', label:'Email address', type:'email', required:true},
+      {id:'loginPassword', label:'Password', type:'password', required:true}
+    ]},
+    {id:'sex_ethnicity_group', stage:1, type:'group', q:"A couple of quick details", condition:isNewToEverslim, fields:[
+      {id:'sex', label:'Gender', type:'select', options:['Female','Male','Other','Prefer not to say'], required:true},
+      {id:'ethnicity', label:'Ethnicity', type:'select', options:ETHNICITY_OPTIONS, required:true, hint:"BMI thresholds can differ for some ethnic backgrounds, so we ask this before working out your eligibility."}
+    ]}
+  ];
+
+  const MEASUREMENTS_STEP = {id:'measurements_group', stage:2, type:'group', q:"Your weight and height", fields:[
+    {id:'weight', label:'Weight', type:'weight', required:true},
+    {id:'height', label:'Height', type:'height', required:true},
+    {id:'measurementsVerifyNotice', label:'', type:'notice', content:"After purchase, we'll email you a link to verify your identity and current weight with a quick photo — you don't need to upload any evidence now.", required:false, condition:isNewToEverslim}
+  ]};
+
+  const PREGNANCY_GROUP_STEP = {id:'pregnancy_group', stage:2, type:'group', q:"Pregnancy and contraception", condition:a=>a.sex!=='Male', fields:[
+    {id:'pregnant', label:'Are you pregnant, or could you currently be pregnant?', type:'yesno', required:true},
+    {id:'lastPeriodDate', label:'Date of your last menstrual period, if known', type:'date', required:false, condition:a=>a.pregnant!=='yes'},
+    {id:'planPregnancyDuring', label:'Are you trying to become pregnant, or planning to become pregnant during treatment?', type:'yesno', required:true},
+    {id:'breastfeeding', label:'Are you breastfeeding?', type:'yesno', required:true},
+    {id:'pcos', label:'Have you been diagnosed with polycystic ovary syndrome (PCOS)?', type:'yesno', required:true},
+    {id:'gestationalDiabetes', label:'Have you ever had gestational diabetes or diabetes in pregnancy?', type:'yesno', required:true},
+    {id:'pregnancyComplications', label:'Any other pregnancy complications relevant to your weight or metabolism?', type:'yesno', required:true},
+    {id:'pregnancyComplicationsDetails', label:'Please give brief details', type:'textarea', required:true, condition:a=>a.pregnancyComplications==='yes'},
+    {id:'usingContraception', label:'Are you using contraception?', type:'yesno', required:true},
+    {id:'contraceptionType', label:'What type of contraception are you using?', type:'text', required:true, condition:a=>a.usingContraception==='yes'},
+    {id:'contraceptionAdviceNotice', label:'', type:'notice', content:"<strong>Contraception advice:</strong> Some weight-management medicines can reduce the effectiveness of oral contraceptives — particularly during dose increases, or if they cause vomiting or diarrhoea. Depending on the medicine your prescriber confirms is suitable for you, you may be advised to use an additional barrier method (such as condoms) for a period of time. Your prescriber will confirm the exact advice for your specific medicine before you start treatment.", required:false},
+    {id:'understandsContraceptionAdvice', label:'I have read and understood this advice', type:'yesno', required:true}
+  ]};
+
+  const BMI_ELIGIBILITY_STEP = {id:'bmi_eligibility', stage:2, type:'eligibility'};
+  const MEDICAL_HISTORY_STEP = {id:'medical_history', stage:2, type:'multi', q:"Do you have any of these health conditions?", hint:"Please tick anything that applies to you now or has applied in the past. Please answer accurately — your prescriber relies on this, and incomplete or inaccurate answers may pose a risk to your health. We'll only ask follow-up questions where they're relevant.", options:MEDICAL_HISTORY, exclusive:'none', required:true};
+  const MEDICAL_HISTORY_DETAILS_STEP = {id:'medical_history_details', stage:2, type:'group', q:"Tell us more about your medical history",
+    fields:[
+      {id:'medicalHistoryMore', label:"Anything else about your medical history you'd like to tell us?", type:'textarea', required:false},
+      {id:'diabetesType', label:'What type of diabetes?', type:'select', options:['Type 1','Type 2','Prediabetes'], required:true, condition:a=>(a.medical_history||[]).includes('diabetes_type')},
+      {id:'diabetesInsulinSU', label:'Do you take insulin or a sulfonylurea (for example gliclazide, glimepiride or glipizide)?', type:'yesno', required:true, condition:a=>(a.medical_history||[]).includes('diabetes_type')},
+      {id:'pancreatitisGallbladderRemoved', label:'Was this caused by gallstones, and has your gallbladder since been removed?', type:'yesno', required:true, condition:a=>(a.medical_history||[]).includes('pancreatitis')},
+      {id:'pancreatitisActive', label:'Do you have active or ongoing pancreatitis now?', type:'yesno', required:true, condition:a=>(a.medical_history||[]).includes('pancreatitis')}
+    ]};
+  const MEDICINES_GROUP_STEP = {id:'medicines_group', stage:2, type:'group', q:"Your medicines and allergies", fields:[
+    {id:'currentMedsNotice', label:'', type:'notice', content:"Please include all your medicines, even ones that seem unrelated to weight management. It's important for your prescriber to know about any medicines you're taking, as some can interact with weight-management treatment.", required:false},
+    {id:'currentMeds', label:'Current prescribed medicines', type:'textarea', required:false},
+    {id:'otcSupplements', label:'Over-the-counter medicines and supplements', type:'textarea', required:false},
+    {id:'allergyList', label:'Medicine allergies', type:'textarea', required:false},
+    {id:'seriousReaction', label:'Have you had a previous serious reaction to a medicine?', type:'yesno', required:true},
+    {id:'seriousReactionDetails', label:'Please describe', type:'textarea', required:true, condition:a=>a.seriousReaction==='yes'}
+  ]};
+  const SCOFF_GROUP_STEP = {id:'scoff_group', stage:2, type:'group', q:"Your eating habits", condition:a=>(a.medical_history||[]).includes('eating_concerns'), intro:"These are five standard screening questions used across the NHS.", fields:[
+    {id:'scoff1', label:'Do you make yourself Sick because you feel uncomfortably full?', type:'yesno', required:true},
+    {id:'scoff2', label:'Do you worry you have lost Control over how much you eat?', type:'yesno', required:true},
+    {id:'scoff3', label:'Have you recently lost more than One stone (14 lb / 6.35 kg) in a 3-month period?', type:'yesno', required:true},
+    {id:'scoff4', label:'Do you believe yourself to be Fat when others say you are too thin?', type:'yesno', required:true},
+    {id:'scoff5', label:'Would you say that Food dominates your life?', type:'yesno', required:true},
+    {id:'eatingDisorderHistory', label:'Have you had an eating disorder?', type:'select3', options:[{v:'no',l:'No'},{v:'past',l:'Yes — in the past'},{v:'current',l:'Yes — currently'}], required:true},
+    {id:'eatingDisorderSupport', label:'Have you received treatment or professional support for this?', type:'yesno', required:true, condition:a=>a.eatingDisorderHistory && a.eatingDisorderHistory!=='no'},
+    {id:'cosmeticMotivation', label:'Is your main reason for treatment cosmetic or appearance-related?', type:'yesno', required:true},
+    {id:'rapidWeightLossGoal', label:'Are you seeking rapid or extreme weight loss?', type:'yesno', required:true}
+  ]};
+  const MENTAL_HEALTH_GROUP_STEP = {id:'mental_health_group', stage:2, type:'group', q:"Your mood", condition:a=>(a.medical_history||[]).includes('mood_concerns'), intro:"Over the last 2 weeks, how often have you been bothered by the following? 0 = not at all, 1 = several days, 2 = more than half the days, 3 = nearly every day.", fields:[
+    {id:'phq1', label:'Little interest or pleasure in doing things', type:'select3', options:PHQ_SCALE, required:true},
+    {id:'phq2', label:'Feeling down, depressed, or hopeless', type:'select3', options:PHQ_SCALE, required:true},
+    {id:'phq3', label:'Trouble falling or staying asleep, or sleeping too much', type:'select3', options:PHQ_SCALE, required:true},
+    {id:'phq4', label:'Feeling tired or having little energy', type:'select3', options:PHQ_SCALE, required:true},
+    {id:'phq5', label:'Poor appetite or overeating', type:'select3', options:PHQ_SCALE, required:true},
+    {id:'phq6', label:'Feeling bad about yourself — or that you are a failure, or have let yourself or your family down', type:'select3', options:PHQ_SCALE, required:true},
+    {id:'phq7', label:'Trouble concentrating on things, such as reading or watching television', type:'select3', options:PHQ_SCALE, required:true},
+    {id:'phq8', label:'Moving or speaking so slowly that other people could have noticed, or being fidgety or restless', type:'select3', options:PHQ_SCALE, required:true},
+    {id:'phq9', label:'Thoughts that you would be better off dead, or of hurting yourself in some way', type:'select3', options:PHQ_SCALE, required:true},
+    {id:'selfHarmDetails', label:'Please give brief details', type:'textarea', required:true, condition:a=>a.phq9 && a.phq9!=='0'},
+    {id:'mentalHealthUnstable', label:'Is a mental-health condition currently unstable or significantly affecting you?', type:'yesno', required:true},
+    {id:'capacityConcern', label:'Is there anything affecting your ability to consent or provide reliable information?', type:'yesno', required:true},
+    {id:'safeguardingConcern', label:'Do you have any safeguarding concerns?', type:'yesno', required:true}
+  ]};
+  const GOALS_TICKLIST_STEP = {id:'goals_ticklist', stage:2, type:'multi', q:"What are your main reasons for wanting to lose weight?", options:[
+    {v:'overall_health', l:'Improving my overall health'},
+    {v:'manage_condition', l:'Avoiding or managing a specific health condition'},
+    {v:'look_feel_better', l:'Looking and feeling better'},
+    {v:'more_active', l:'Becoming more active'},
+    {v:'mood_wellbeing', l:'Improving my mood and mental wellbeing'},
+    {v:'sleep_energy', l:'Improving my sleep or energy levels'},
+    {v:'other', l:'Other'}
+  ], required:true};
+  const GOALS_GROUP_STEP = {id:'goals_group', stage:2, type:'group', q:"Your lifestyle and previous support", fields:[
+    {id:'goalsOtherText', label:'Please tell us more about your reason', type:'text', required:true, condition:a=>(a.goals_ticklist||[]).includes('other')},
+    {id:'triedDietActivity', label:'Have you tried dietary, physical-activity or behavioural support?', type:'yesno', required:true},
+    {id:'structuredProgramme', label:'Have you used a structured weight-management programme?', type:'yesno', required:true},
+    {id:'willingDiet', label:'Are you willing to follow a reduced-calorie diet?', type:'yesno', required:true},
+    {id:'willingActivity', label:'Are you willing to increase physical activity?', type:'yesno', required:true}
+  ]};
+
+  const MOTIVATION_STEP = {id:'motivation_interstitial', stage:2, type:'motivation',
+    title: "You're over a third of the way there",
+    subtitle: "Weight-management treatment works best as part of an ongoing plan, alongside diet and activity changes.",
+    footnote: "Illustrative only — figures shown to patients must come from approved, clinically-sourced data, not a general trend line."
+  };
+
+  const STAGE2_NEW_STEPS = [
+    MEASUREMENTS_STEP, BMI_ELIGIBILITY_STEP, MEDICAL_HISTORY_STEP, MEDICAL_HISTORY_DETAILS_STEP,
+    MOTIVATION_STEP,
+    MEDICINES_GROUP_STEP, PREGNANCY_GROUP_STEP,
+    SCOFF_GROUP_STEP, MENTAL_HEALTH_GROUP_STEP,
+    GOALS_TICKLIST_STEP, GOALS_GROUP_STEP
+  ];
+
+  const CONTINUITY_GROUP_STEP = {id:'continuity_group', stage:2, type:'group', q:"Your current treatment", fields:[
+    {id:'continuityMedicine', label:'Which medicine is this for?', type:'select', options:MEDICINE_OPTIONS.filter(m=>m!=='No preference'), required:true},
+    {id:'mostRecentDose', label:'Most recent dose (e.g. 2.4mg)', type:'text', required:true},
+    {id:'lastDoseDate', label:'Exact date of your last dose', type:'date', required:true},
+    {id:'timeOnDose', label:'How long have you been on this dose?', type:'text', required:true},
+    {id:'missedDosesOrBreak', label:"Any missed doses, or the longest break you've had?", type:'textarea', required:true},
+    {id:'supplierProvider', label:'Who supplies or supplied this medicine? (pharmacy or provider name)', type:'text', required:true, condition:a=>a.pathway_choice!=='continuing'},
+    {id:'consecutiveDoses', label:'Were the preceding doses taken consecutively?', type:'yesno', required:true, condition:a=>a.pathway_choice==='transferring'},
+    {id:'reasonForTransfer', label:'Why are you transferring to Everslim?', type:'textarea', required:true, condition:a=>a.pathway_choice==='transferring'},
+    {id:'reasonStopped', label:'Why did you stop taking it?', type:'textarea', required:true, condition:a=>a.pathway_choice==='restarting'},
+    {id:'reasonForSwitch', label:'Why do you want to switch?', type:'textarea', required:true, condition:a=>a.pathway_choice==='switching'},
+    {id:'proposedTiming', label:'When would you like to switch?', type:'text', required:true, condition:a=>a.pathway_choice==='switching'},
+    {id:'adverseEffectsOnCurrent', label:'Any adverse effects on this medicine?', type:'yesno', required:true},
+    {id:'adverseEffectsDetails', label:"Please describe the effect(s), how severe, and whether they're ongoing", type:'textarea', required:true, condition:a=>a.adverseEffectsOnCurrent==='yes'}
+  ]};
+
+  const STAGE2_TRANSFER_STEPS = [
+    MEASUREMENTS_STEP, BMI_ELIGIBILITY_STEP, MEDICAL_HISTORY_STEP, MEDICAL_HISTORY_DETAILS_STEP,
+    MOTIVATION_STEP,
+    MEDICINES_GROUP_STEP, CONTINUITY_GROUP_STEP, PREGNANCY_GROUP_STEP,
+    SCOFF_GROUP_STEP, MENTAL_HEALTH_GROUP_STEP,
+    GOALS_TICKLIST_STEP, GOALS_GROUP_STEP
+  ];
+
+  const STAGE2_REPEAT_STEPS = [
+    MEASUREMENTS_STEP,
+    CONTINUITY_GROUP_STEP,
+    {id:'medicines_changes_group', stage:2, type:'group', q:"Any changes since your last review?", fields:[
+      {id:'medicinesChanged', label:'Any change to your other prescriptions, over-the-counter medicines, supplements or contraception?', type:'yesno', required:true},
+      {id:'medicinesChangedDetails', label:'Please describe', type:'textarea', required:true, condition:a=>a.medicinesChanged==='yes'},
+      {id:'currentGLP1Other', label:'Are you taking any other GLP-1 or GIP/GLP-1 medicine alongside this one?', type:'yesno', required:true},
+      {id:'elsewhereTreatment', label:'Have you obtained any weight-management treatment elsewhere since your last review?', type:'yesno', required:true}
+    ]},
+    {id:'repeat_review_group', stage:2, type:'group', q:"How things are going", fields:[
+      {id:'appetiteControl', label:'How would you describe your appetite control on this medicine?', type:'select', options:['Good','Partial','Poor'], required:true},
+      {id:'newDiagnosisOrChange', label:'Any new diagnosis, significant health change, planned procedure or acute symptom since your last review?', type:'yesno', required:true},
+      {id:'newDiagnosisDetails', label:'Please describe', type:'textarea', required:true, condition:a=>a.newDiagnosisOrChange==='yes'},
+      {id:'patientPreference', label:'What would you like to happen next?', type:'select', options:['Continue current dose','Consider increasing dose','Consider reducing dose','Switch treatment','Discuss with the clinical team'], required:true}
+    ]}
+  ];
+
+  const STAGE3_STEPS = [
+    {id:'register_group', stage:3, type:'group', q:"Register as a new patient", condition:isNewToEverslim, fields:[
+      {id:'address', label:'Address', type:'textarea', required:true},
+      {id:'deliveryAddress', label:'Delivery address (if different)', type:'textarea', required:false},
+      {id:'phone', label:'Telephone number', type:'tel', required:true},
+      {id:'email', label:'Email address', type:'email', required:true},
+      {id:'createPassword', label:'Create a password', type:'password', required:true}
+    ]},
+    {id:'contact_preference_group', stage:3, type:'group', q:"Speaking with the clinical team", fields:[
+      {id:'wantsToDiscuss', label:"Is there anything you'd like to discuss directly with the clinical team before treatment is considered?", type:'yesno', required:true},
+      {id:'wantsToDiscussDetails', label:'What would you like to discuss?', type:'textarea', required:true, condition:a=>a.wantsToDiscuss==='yes'}
+    ]},
+    {id:'gp_group', stage:3, type:'group', q:"Your GP or regular prescriber", condition:isNewToEverslim, fields:[
+      {id:'gpLookupNotice', label:'', type:'notice', content:"In the live service, this would be a searchable NHS GP practice lookup (NHS Personal Demographics Service). For now, please enter your practice details manually.", required:false},
+      {id:'gpPractice', label:'GP practice name', type:'text', required:false},
+      {id:'gpAddress', label:'Practice address', type:'textarea', required:false},
+      {id:'gpPhone', label:'Telephone number', type:'tel', required:false},
+      {id:'gpPrescriberName', label:'Regular prescriber name, if known', type:'text', required:false},
+      {id:'otherProvider', label:'Other healthcare provider details, if no GP', type:'textarea', required:false},
+      {id:'consentGP', label:'Do you consent to us contacting your GP or regular prescriber, and sharing relevant prescription information with them?', type:'yesno', required:true}
+    ]},
+    {id:'review', stage:3, type:'review'},
+    {id:'declaration', stage:3, type:'declaration'},
+    {id:'confirmation', stage:3, type:'confirmation'}
+  ];
+
+  function getSteps(){
+    const pw = answers.pathway_choice;
+    let stage2;
+    if (pw === 'new') stage2 = STAGE2_NEW_STEPS;
+    else if (pw === 'transferring' || isNewToEverslim(answers)) stage2 = STAGE2_TRANSFER_STEPS;
+    else stage2 = STAGE2_REPEAT_STEPS;
+    return STAGE1_STEPS.concat(stage2).concat(STAGE3_STEPS);
+  }
+  function visibleSteps(){
+    return getSteps().filter(s => !s.condition || s.condition(answers));
+  }
+
+  const answers = {};
+  let currentStepId = 'welcome';
+  let terminal = null; // holds an EXIT config when the flow has hard-stopped
+  let currentStream = null;
+  let mediaRecorder = null;
+  let recordedChunks = [];
+  let recordTimerHandle = null;
+
+  function scoffScore(a){
+    const items = ['scoff1','scoff2','scoff3','scoff4','scoff5'];
+    if (!items.every(k => a[k] !== undefined)) return null;
+    return items.filter(k => a[k] === 'yes').length;
+  }
+  function phq9Score(a){
+    const items = ['phq1','phq2','phq3','phq4','phq5','phq6','phq7','phq8','phq9'];
+    if (!items.every(k => a[k] !== undefined)) return null;
+    return items.reduce((sum,k)=> sum + parseInt(a[k],10), 0);
+  }
+  function phq9Band(score){
+    if (score < 5) return 'Minimal';
+    if (score < 10) return 'Mild';
+    if (score < 15) return 'Moderate';
+    if (score < 20) return 'Moderately severe';
+    return 'Severe';
+  }
+
+  function pickVideoMimeType(){
+    const candidates = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4;codecs=avc1','video/mp4'];
+    for (const c of candidates){
+      if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(c)) return c;
+    }
+    return ''; // let the browser choose its own default
+  }
+
+  function stopCurrentStream(){
+    if (currentStream){
+      currentStream.getTracks().forEach(t=>t.stop());
+      currentStream = null;
+    }
+    if (recordTimerHandle){ clearInterval(recordTimerHandle); recordTimerHandle = null; }
+    mediaRecorder = null;
+    recordedChunks = [];
+  }
+
+
+
+
+  function isVisible(step){ return true; }
+
+  function computeAmberFlags(a){
+    const flags = [];
+    const band = bmiBand(a);
+    if (band === 'mid'){
+      const qualifying = ['dyslipidaemia','osa','cvd','diabetes_type'];
+      const hasQualifying = (a.medical_history||[]).some(v => qualifying.includes(v));
+      if (hasQualifying) flags.push('BMI 27–30 with qualifying condition — pending verification');
+      else flags.push('BMI 27–30 with no qualifying condition declared — requires individual prescriber review; off-protocol prescribing needs documented rationale and explicit consent');
+    }
+    if (band === 'low') flags.push('BMI below standard PGD threshold — requires individual prescriber review; off-protocol prescribing needs documented rationale and explicit consent');
+    const mhSelected = a.medical_history || [];
+    MEDICAL_HISTORY.forEach(item=>{
+      if (item.v !== 'severe_abdo_pain' && item.v !== 'vomiting_dehydration' && item.v !== 'visual_symptoms' && item.v !== 'none' && mhSelected.includes(item.v)) flags.push(item.l);
+    });
+    if (mhSelected.includes('kidney_liver')) flags.push('kidney or liver disease — case-by-case; nephrology input required if eGFR <30');
+    if (mhSelected.includes('pancreatitis') && a.pancreatitisActive !== 'yes') flags.push('history of pancreatitis, not currently active' + (a.pancreatitisGallbladderRemoved==='yes' ? ' — gallstone-related, gallbladder since removed' : ''));
+    if (a.diabetesInsulinSU === 'yes') flags.push('concomitant insulin or sulfonylurea — prescribing only with diabetes specialist input and an enhanced monitoring plan');
+    if (a.planPregnancyDuring === 'yes') flags.push('planning pregnancy during treatment');
+    if (a.eatingDisorderHistory === 'past') flags.push('previous eating disorder');
+    const phq = phq9Score(a);
+    if (phq !== null && phq >= 10) flags.push('PHQ-9 score '+phq+'/27 (moderate or above)');
+    if (isNewToEverslim(a) && (!a.consentGP || a.consentGP === 'no' || (!a.gpPractice && !a.otherProvider))) flags.push('no GP/provider details or consent — prescriber risk assessment required');
+    if (a.wantsToDiscuss === 'yes') flags.push('patient requested direct contact with the clinical team before treatment is considered');
+    return flags;
+  }
+
+  function ageFromDob(dobStr){
+    if (!dobStr) return null;
+    const dob = new Date(dobStr);
+    if (isNaN(dob.getTime())) return null;
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    return age;
+  }
+
+  function detectExit(step, a){
+    if (step.id === 'medicines_group' && a.seriousReaction === 'yes') return EXIT.seriousAllergy;
+    if (step.id === 'dob_check'){
+      const age = ageFromDob(a.dob);
+      if (age !== null && age < 18) return EXIT.ageRestrictedConfirm;
+      if (age !== null && age > 75) return EXIT.ageRestrictedConfirmOver;
+    }
+    if (step.id === 'medical_history'){
+      if ((a.medical_history||[]).includes('severe_abdo_pain') || (a.medical_history||[]).includes('vomiting_dehydration') || (a.medical_history||[]).includes('visual_symptoms')) return EXIT.urgentMedical;
+    }
+    if (step.id === 'pregnancy_group'){
+      if (a.pregnant === 'yes') return EXIT.pregnancy;
+      if (a.planPregnancyDuring === 'yes') return EXIT.pregnancy;
+      if (a.breastfeeding === 'yes') return EXIT.breastfeeding;
+    }
+    if (step.id === 'medical_history'){
+      if ((a.medical_history||[]).includes('men2_mtc')) return EXIT.men2Contraindication;
+    }
+    if (step.id === 'medical_history_details'){
+      if ((a.medical_history||[]).includes('pancreatitis') && a.pancreatitisActive === 'yes') return EXIT.pancreatitisContraindication;
+      if (a.diabetesType === 'Type 1') return EXIT.type1DiabetesReferral;
+    }
+    if (step.id === 'scoff_group'){
+      const s = scoffScore(a);
+      if ((s !== null && s >= 2) || a.eatingDisorderHistory === 'current') return EXIT.eatingDisorderActive;
+    }
+    if (step.id === 'mental_health_group'){
+      if (a.mentalHealthUnstable === 'yes' || a.capacityConcern === 'yes' || a.safeguardingConcern === 'yes') return EXIT.safeguardingConcern;
+      if (a.phq9 && a.phq9 !== '0') return EXIT.selfHarmUrgent;
+    }
+    return null;
+  }
+
+  function isValid(step){
+    if (step.type === 'welcome' || step.type === 'eligibility' || step.type === 'score_result' || step.type === 'motivation' || step.type === 'review') return true;
+    if (step.type === 'file' || step.type === 'live_photo' || step.type === 'live_video') return !!answers[step.id];
+    if (step.type === 'radio' || step.type === 'multi'){
+      const v = answers[step.id];
+      if (step.type === 'multi') return Array.isArray(v) && v.length > 0;
+      return !!v;
+    }
+    if (step.type === 'group'){
+      return step.fields.every(f=>{
+        if (f.condition && !f.condition(answers)) return true;
+        if (!f.required) return true;
+        if (f.type === 'height') return heightCmValue(answers) !== null;
+        if (f.type === 'weight') return weightKgValue(answers) !== null;
+        const v = answers[f.id];
+        if (f.type === 'file') return true; // optional-in-practice, no persistence layer
+        return v !== undefined && v !== null && String(v).trim() !== '';
+      });
+    }
+    if (step.type === 'declaration') return answers.declaration_confirmed === true;
+    return true;
+  }
+
+  function fieldControlHtml(f){
+    const v = answers[f.id];
+    if (f.condition && !f.condition(answers)) return '';
+    if (f.type === 'notice'){
+      return `<div class="key-copy" style="margin:16px 0;">${f.content}</div>`;
+    }
+    let inner = '';
+    if (f.type === 'yesno' || f.type === 'yesnona'){
+      const opts = f.type === 'yesnona' ? YESNONA : YESNO;
+      inner = `<div class="inline-yesno" data-field="${f.id}">` + opts.map(o=>`<button type="button" class="inline-btn ${v===o.v?'selected':''}" data-field="${f.id}" data-value="${o.v}">${o.l}</button>`).join('') + `</div>`;
+    } else if (f.type === 'select3'){
+      inner = `<div class="inline-yesno" data-field="${f.id}">` + f.options.map(o=>`<button type="button" class="inline-btn ${v===o.v?'selected':''}" data-field="${f.id}" data-value="${o.v}">${o.l}</button>`).join('') + `</div>`;
+    } else if (f.type === 'select'){
+      inner = `<select data-field="${f.id}"><option value="">Please select</option>` + f.options.map(o=>`<option value="${o}" ${v===o?'selected':''}>${o}</option>`).join('') + `</select>`;
+    } else if (f.type === 'textarea'){
+      inner = `<textarea data-field="${f.id}" rows="3">${v||''}</textarea>`;
+    } else if (f.type === 'file'){
+      inner = `<input type="file" data-field="${f.id}">`;
+    } else if (f.type === 'height'){
+      const unit = answers.height_unit || 'cm';
+      inner = `<select data-unit-toggle="height"><option value="cm" ${unit==='cm'?'selected':''}>Centimetres</option><option value="ftin" ${unit==='ftin'?'selected':''}>Feet & inches</option></select>`;
+      if (unit === 'cm'){
+        inner += `<input type="number" data-field="heightCm" placeholder="e.g. 170" value="${answers.heightCm||''}" style="margin-top:8px;">`;
+      } else {
+        inner += `<div style="display:flex;gap:8px;margin-top:8px;">
+          <input type="number" data-field="height_ft" placeholder="Feet" value="${answers.height_ft||''}">
+          <input type="number" data-field="height_in" placeholder="Inches" value="${answers.height_in||''}">
+        </div>`;
+      }
+    } else if (f.type === 'weight'){
+      const unit = answers.weight_unit || 'kg';
+      inner = `<select data-unit-toggle="weight"><option value="kg" ${unit==='kg'?'selected':''}>Kilograms</option><option value="stlb" ${unit==='stlb'?'selected':''}>Stone & pounds</option></select>`;
+      if (unit === 'kg'){
+        inner += `<input type="number" data-field="weightKg" placeholder="e.g. 90" value="${answers.weightKg||''}" style="margin-top:8px;">`;
+      } else {
+        inner += `<div style="display:flex;gap:8px;margin-top:8px;">
+          <input type="number" data-field="weight_st" placeholder="Stone" value="${answers.weight_st||''}">
+          <input type="number" data-field="weight_lb" placeholder="Pounds" value="${answers.weight_lb||''}">
+        </div>`;
+      }
+    } else {
+      inner = `<input type="${f.type}" data-field="${f.id}" value="${v||''}">`;
+    }
+    return `<div class="group-field"><label>${f.label}${f.required?' *':''}</label>${inner}${f.hint?`<div class="subhint">${f.hint}</div>`:''}</div>`;
+  }
+
+  function render(){
+    if (terminal){ renderTerminal(); return; }
+    const steps = visibleSteps();
+    let idx = steps.findIndex(s=>s.id===currentStepId);
+    if (idx < 0) idx = 0;
+    const step = steps[idx];
+    const qBlock = document.getElementById('questionBlock');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+
+    renderStageIndicator(step.stage);
+
+    let html = '';
+
+    if (step.type === 'welcome'){
+      document.getElementById('progressLine').style.display = 'none';
+      html = `<div class="welcome-screen">
+        <h1>Start your weight-management assessment</h1>
+        <p class="question-hint">A few quick questions, reviewed individually by a prescriber — completing this doesn't guarantee treatment or supply.</p>
+        <div class="info-card" style="padding:20px;margin-top:16px;">
+          <svg viewBox="0 0 400 160" style="width:100%;height:auto;">
+            <defs>
+              <linearGradient id="welcomeFade" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="var(--pink)" stop-opacity="0.25"/>
+                <stop offset="100%" stop-color="var(--pink)" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M20,30 C120,35 160,70 200,90 C260,120 320,135 380,138 L380,150 L20,150 Z" fill="url(#welcomeFade)"/>
+            <path d="M20,30 C120,35 160,70 200,90 C260,120 320,135 380,138" fill="none" stroke="var(--pink)" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="20" cy="30" r="5" fill="var(--pink)"/>
+            <circle cx="380" cy="138" r="5" fill="var(--chartreuse)"/>
+            <text x="20" y="20" font-size="11" fill="var(--ink-soft)">Starting point</text>
+            <text x="380" y="152" font-size="11" fill="var(--ink)" text-anchor="end" font-weight="bold">With ongoing support</text>
+          </svg>
+        </div>
+        <p style="font-size:11px;color:var(--ink-soft);margin-top:6px;">Illustrative only — figures shown to patients must come from approved, clinically-sourced data, not a general trend line.</p>
+        <div class="welcome-cta-list">
+          <button type="button" class="capture-btn" id="startBtn">Start assessment</button>
+          <button type="button" class="capture-btn" id="signinBtn">Sign in</button>
+          <button type="button" class="capture-btn" id="howBtn">How this works</button>
+        </div>
+      </div>`;
+      qBlock.innerHTML = html;
+      document.getElementById('actionsBlock').style.display = 'none';
+      document.getElementById('startBtn').addEventListener('click', ()=>{ document.getElementById('actionsBlock').style.display=''; document.getElementById('progressLine').style.display=''; currentStepId = visibleSteps()[1].id; render(); });
+      document.getElementById('signinBtn').addEventListener('click', ()=>{ alert("Sign-in isn't wired up in this preview."); });
+      document.getElementById('howBtn').addEventListener('click', ()=>{ alert('This short assessment covers your details, health history and treatment suitability. A prescriber reviews everything before any decision is made.'); });
+      return;
+    }
+
+    document.getElementById('progressLine').style.display = '';
+    document.getElementById('actionsBlock').style.display = '';
+
+    if (step.type === 'radio' || step.type === 'multi'){
+      html += `<h1>${step.q}</h1>`;
+      if (step.hint) html += `<p class="question-hint">${step.hint}</p>`;
+      html += `<div class="choose-label">${step.type==='multi'?'Choose all that apply':'Choose Option'}</div>`;
+      html += `<div class="option-list">` + step.options.map(o=>{
+        const sel = step.type==='multi' ? (Array.isArray(answers[step.id])&&answers[step.id].includes(o.v)) : answers[step.id]===o.v;
+        return `<button type="button" class="option-btn ${step.type==='multi'?'multi':''} ${sel?'selected':''}" data-value="${o.v}">${o.l}</button>`;
+      }).join('') + `</div>`;
+    } else if (step.type === 'group'){
+      html += `<h1>${step.q}</h1>`;
+      if (step.intro) html += `<p class="question-hint">${step.intro}</p>`;
+      html += step.fields.map(fieldControlHtml).join('');
+    } else if (step.type === 'file'){
+      html += `<h1>${step.q}</h1>`;
+      if (step.hint) html += `<p class="question-hint">${step.hint}</p>`;
+      const chosenName = answers[step.id + '_name'];
+      if (answers[step.id] && chosenName){
+        html += `<div class="info-card">✓ File selected: ${chosenName}</div>`;
+        html += `<div class="option-list"><button type="button" class="capture-btn" id="changeFileBtn">Choose a different file</button></div>`;
+      } else {
+        html += `<input type="file" id="fileInput" accept="image/*,application/pdf">`;
+      }
+    } else if (step.type === 'eligibility'){
+      const band = bmiBand(answers);
+      const b = bmiOf(answers);
+      html += `<h1>Your initial eligibility check</h1>`;
+      if (b !== null){
+        html += `<div class="info-card"><div class="hint">Your preliminary BMI</div><div class="bmi-value">${Math.round(b*10)/10}</div></div>`;
+      }
+      if (band === 'high'){
+        html += `<div class="key-copy">Your BMI is within the usual licensed BMI range for consideration of weight management medicines. A prescriber must still review your health information and verify your measurements.</div>`;
+      } else if (band === 'mid'){
+        html += `<div class="key-copy">Because your BMI is between 27 and 30, we need to ask whether you have a weight-related health condition.</div>`;
+      } else if (band === 'low'){
+        html += `<div class="key-copy">Your BMI is below the usual licensed threshold for these medicines. You can still continue — your prescriber will review your individual circumstances, and may only consider treatment outside the standard criteria with a documented clinical rationale and your explicit informed consent.</div>`;
+      }
+    } else if (step.type === 'motivation'){
+      html += `<h1>${step.title}</h1>`;
+      html += `<p class="question-hint">${step.subtitle}</p>`;
+      html += `<div class="info-card" style="padding:20px;">
+        <svg viewBox="0 0 400 160" style="width:100%;height:auto;">
+          <defs>
+            <linearGradient id="motivFade" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--pink)" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="var(--pink)" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M20,30 C120,35 160,70 200,90 C260,120 320,135 380,138 L380,150 L20,150 Z" fill="url(#motivFade)"/>
+          <path d="M20,30 C120,35 160,70 200,90 C260,120 320,135 380,138" fill="none" stroke="var(--pink)" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="20" cy="30" r="5" fill="var(--pink)"/>
+          <circle cx="380" cy="138" r="5" fill="var(--chartreuse)"/>
+          <text x="20" y="20" font-size="11" fill="var(--ink-soft)">Starting point</text>
+          <text x="380" y="152" font-size="11" fill="var(--ink)" text-anchor="end" font-weight="bold">With ongoing support</text>
+        </svg>
+      </div>
+      <p class="question-hint" style="margin-top:14px;">${step.footnote}</p>`;
+    } else if (step.type === 'score_result'){
+      const result = step.compute(answers);
+      html += `<h1>${step.title}</h1>`;
+      if (result){
+        html += `<div class="info-card"><div class="hint">${result.label}</div><div class="bmi-value">${result.value}</div><span class="cat">${result.band}</span></div>`;
+        if (result.note) html += `<p class="question-hint">${result.note}</p>`;
+      } else {
+        html += `<div class="info-card">We couldn't calculate this — please go back and check your answers.</div>`;
+      }
+    } else if (step.type === 'declaration'){
+      html += `<h1>Confirm and submit</h1>`;
+      html += `<div class="key-copy">I confirm that I am currently in the UK — this service can only be offered to people in the UK. This is a clinical consultation, and the information you've provided may be checked against your clinical records or another healthcare provider. Your prescriber may ask to speak with you by secure message, telephone, video or in person before making a decision, and we may need to contact your GP or current weight-management provider, where applicable. Treatment is subject to licensed indications, NICE guidance and local formulary or commissioning requirements. I agree for Everslim to check my NHS Summary Care Record (SCR) — if I haven't already opted in to sharing this, Everslim will ask my GP practice to enable it so my prescriber can see relevant medical history.</div>
+      <div class="key-copy">I confirm that I am completing this consultation myself, and that the information I have provided is complete and accurate to the best of my knowledge. I have disclosed all relevant medicines and treatment from other providers. I understand that treatment is subject to clinical suitability and that this questionnaire does not guarantee a prescription. I know how to obtain urgent help if I need it. I consent to the proposed clinical review process, and understand the prescriber may ask further questions, verify my information, contact my GP or regular prescriber, or arrange another type of consultation.<br><br>I will notify Everslim promptly of any changes to my health, as this may affect the suitability of my treatment.<br><br>This treatment is for my personal use only, and I will not use more than one weight-loss treatment at the same time.<br><br>I understand that any medication must be used alongside a healthy diet and regular physical activity.<br><br>I will read the Patient Information Leaflet, if prescribed, and understand that all medicines can cause side effects.<br><br>I accept the Terms of Use, Terms of Sale, Cancellation and Refund Policy, and Privacy Policy.</div>`;
+      const sel = answers.declaration_confirmed === true;
+      html += `<div class="option-list"><button type="button" class="option-btn ${sel?'selected':''}" id="declBtn">I confirm this declaration</button></div>`;
+    } else if (step.type === 'review'){
+      document.getElementById('progressLine').style.display = 'none';
+      html += `<h1>Check your answers</h1>`;
+      html += reviewSectionsHtml();
+    }
+
+    qBlock.innerHTML = html;
+    wireStepEvents(step);
+
+    const visibleTotal = steps.filter(s=>s.type!=='welcome').length;
+    const posIdx = steps.indexOf(step);
+    const pct = Math.round((posIdx/(steps.length-1))*100);
+    document.getElementById('progressText').textContent = pct + '% Complete';
+
+    prevBtn.hidden = (posIdx <= 1);
+    nextBtn.textContent = step.type === 'declaration' ? 'Submit for clinical review →'
+      : (step.type === 'review' ? 'Continue to declaration →' : 'Next →');
+
+    updateNextState();
+  }
+
+  function reviewSectionsHtml(){
+    const sections = [
+      {label:'Your details', keys:['fullName','dob','address','phone','email','ethnicity'], edit:'register_group'},
+      {label:'Measurements', keys:['weightKg','heightCm'], edit:'measurements_group'},
+      {label:'Health conditions', keys:['medical_history'], edit:'medical_history'},
+      {label:'Pregnancy', keys:['pregnant','breastfeeding','usingContraception'], edit:'pregnancy_group'},
+      {label:'Eating habits and mood', keys:['eatingDisorderHistory','phq9'], edit:'scoff_group'},
+      {label:'Your goals', keys:['goals_ticklist'], edit:'goals_ticklist'},
+      {label:'GP details', keys:['gpPractice','consentGP'], edit:'gp_group'}
+    ];
+    return sections.map(sec=>{
+      let body;
+      if (sec.label === 'Medical history'){
+        const flagged = MEDICAL_HISTORY.filter(i=>i.v!=='none' && (answers.medical_history||[]).includes(i.v)).map(i=>i.l);
+        body = flagged.length ? flagged.join(', ') : 'No concerns reported';
+      } else if (sec.label === 'Measurements'){
+        const h = heightCmValue(answers), w = weightKgValue(answers);
+        body = (h && w) ? `${Math.round(w*10)/10} kg, ${Math.round(h)} cm` : '—';
+      } else {
+        body = sec.keys.map(k=>{
+          const v = answers[k];
+          if (Array.isArray(v)) return v.join(', ');
+          return v || '—';
+        }).join(' · ');
+      }
+      return `<div class="review-section"><div class="rs-head"><h3>${sec.label}</h3><button type="button" class="rs-edit" data-goto="${sec.edit}">Edit</button></div><div class="rs-body">${body}</div></div>`;
+    }).join('');
+  }
+
+  function wireStepEvents(step){
+    const qBlock = document.getElementById('questionBlock');
+
+    qBlock.querySelectorAll('.option-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const val = btn.dataset.value;
+        if (step.type === 'multi'){
+          let arr = Array.isArray(answers[step.id]) ? answers[step.id].slice() : [];
+          if (step.exclusive && val === step.exclusive){
+            arr = arr.includes(val) ? [] : [step.exclusive];
+          } else {
+            if (arr.includes(val)) arr = arr.filter(x=>x!==val);
+            else { arr.push(val); if (step.exclusive) arr = arr.filter(x=>x!==step.exclusive); }
+          }
+          answers[step.id] = arr;
+        } else {
+          answers[step.id] = val;
+        }
+        render();
+      });
+    });
+
+    qBlock.querySelectorAll('.inline-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        answers[btn.dataset.field] = btn.dataset.value;
+        render();
+      });
+    });
+
+    qBlock.querySelectorAll('input[data-field], textarea[data-field]').forEach(el=>{
+      el.addEventListener('input', ()=>{
+        answers[el.dataset.field] = el.type === 'file' ? (el.files && el.files.length>0) : el.value;
+        if (el.dataset.field === 'dob'){
+          const age = ageFromDob(el.value);
+          if (age !== null && age < 18){
+            stopCurrentStream();
+            terminal = EXIT.ageRestrictedConfirm;
+            render();
+            window.scrollTo({top:0});
+            return;
+          }
+          if (age !== null && age > 75){
+            stopCurrentStream();
+            terminal = EXIT.ageRestrictedConfirmOver;
+            render();
+            window.scrollTo({top:0});
+            return;
+          }
+        }
+        if (el.dataset.field === 'weightDate'){
+          render();
+          return;
+        }
+        updateNextState();
+      });
+    });
+    qBlock.querySelectorAll('select[data-field]').forEach(el=>{
+      el.addEventListener('change', ()=>{
+        answers[el.dataset.field] = el.value;
+        updateNextState();
+      });
+    });
+    qBlock.querySelectorAll('[data-unit-toggle]').forEach(el=>{
+      el.addEventListener('change', ()=>{
+        const kind = el.dataset.unitToggle;
+        const newUnit = el.value;
+        if (kind === 'height'){
+          const cm = heightCmValue(answers);
+          if (cm !== null){
+            if (newUnit === 'ftin'){
+              const totalIn = cm / 2.54;
+              const ft = Math.floor(totalIn / 12);
+              const inch = Math.round((totalIn - ft * 12) * 10) / 10;
+              answers.height_ft = String(ft);
+              answers.height_in = String(inch);
+            } else {
+              answers.heightCm = String(Math.round(cm * 10) / 10);
+            }
+          }
+          answers.height_unit = newUnit;
+        } else if (kind === 'weight'){
+          const kg = weightKgValue(answers);
+          if (kg !== null){
+            if (newUnit === 'stlb'){
+              const totalLb = kg / 0.453592;
+              const st = Math.floor(totalLb / 14);
+              const lb = Math.round((totalLb - st * 14) * 10) / 10;
+              answers.weight_st = String(st);
+              answers.weight_lb = String(lb);
+            } else {
+              answers.weightKg = String(Math.round(kg * 10) / 10);
+            }
+          }
+          answers.weight_unit = newUnit;
+        }
+        render();
+      });
+    });
+
+    const declBtn = document.getElementById('declBtn');
+    if (declBtn) declBtn.addEventListener('click', ()=>{
+      answers.declaration_confirmed = !(answers.declaration_confirmed === true);
+      render();
+    });
+
+    qBlock.querySelectorAll('[data-goto]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const target = getSteps().find(s=>s.id===btn.dataset.goto);
+        if (target){ currentStepId = target.id; render(); window.scrollTo({top:0}); }
+      });
+    });
+
+    const fileInput = document.getElementById('fileInput');
+    if (fileInput) fileInput.addEventListener('change', ()=>{
+      const has = fileInput.files && fileInput.files.length > 0;
+      answers[step.id] = has;
+      answers[step.id + '_name'] = has ? fileInput.files[0].name : undefined;
+      render();
+    });
+    const changeFileBtn = document.getElementById('changeFileBtn');
+    if (changeFileBtn) changeFileBtn.addEventListener('click', ()=>{
+      answers[step.id] = undefined;
+      answers[step.id + '_name'] = undefined;
+      render();
+    });
+  }
+
+  function renderStageIndicator(activeStage){
+    const el = document.getElementById('stageIndicator');
+    if (!el) return;
+    el.innerHTML = STAGES.map((s,i)=>{
+      const cls = s.n === activeStage ? 'active' : (s.n < activeStage ? 'done' : '');
+      const pill = `<span class="stage-pill ${cls}">${s.n} ${s.label}</span>`;
+      return i < STAGES.length-1 ? pill + `<span class="stage-line"></span>` : pill;
+    }).join('');
+  }
+
+  function updateNextState(){
+    if (terminal) return;
+    const steps = visibleSteps();
+    const step = steps.find(s=>s.id===currentStepId) || steps[0];
+    document.getElementById('nextBtn').disabled = !isValid(step);
+  }
+
+  function goNext(){
+    const steps = visibleSteps();
+    const idx = steps.findIndex(s=>s.id===currentStepId);
+    const step = steps[idx];
+    if (!isValid(step)) return;
+
+    const exit = detectExit(step, answers);
+    if (exit){ stopCurrentStream(); terminal = exit; render(); window.scrollTo({top:0}); return; }
+
+    if (step.id === 'declaration'){ stopCurrentStream(); submitForm(); return; }
+
+    if (idx >= steps.length - 1) return;
+    stopCurrentStream();
+    currentStepId = steps[idx + 1].id;
+    render();
+    window.scrollTo({top:0});
+  }
+
+  function goPrev(){
+    const steps = visibleSteps();
+    const idx = steps.findIndex(s=>s.id===currentStepId);
+    if (idx <= 1) return;
+    stopCurrentStream();
+    currentStepId = steps[idx - 1].id;
+    render();
+    window.scrollTo({top:0});
+  }
+
+  function renderTerminal(){
+    document.getElementById('stageIndicator').innerHTML = '';
+    document.getElementById('progressLine').style.display = 'none';
+    const qBlock = document.getElementById('questionBlock');
+    let html = `<h1>${terminal.title}</h1><div class="exit-card ${terminal.urgent?'':'neutral'}"><p>${terminal.body}</p></div>`;
+    if (terminal.crisis){
+      html += `<div class="crisis-box"><strong>If you need to talk to someone now</strong>
+        Samaritans: call 116 123 (free, 24/7)<br>
+        Text "SHOUT" to 85258<br>
+        NHS: call 111<br>
+        If you're in immediate danger, call 999 or go to A&E.</div>`;
+    }
+    html += `<div class="option-list" style="margin-top:22px;">` + terminal.ctas.map((c,i)=>`<button type="button" class="capture-btn" data-exit-cta="${i}" data-exit-action="${c.action}">${c.label}</button>`).join('') + `</div>`;
+    qBlock.innerHTML = html;
+    document.getElementById('actionsBlock').style.display = 'none';
+    qBlock.querySelectorAll('[data-exit-cta]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const action = btn.dataset.exitAction;
+        if (action === 'editDob'){
+          stopCurrentStream();
+          terminal = null;
+          currentStepId = 'dob_check';
+          document.getElementById('actionsBlock').style.display = '';
+          render();
+          window.scrollTo({top:0});
+          return;
+        }
+        if (action === 'confirmAgeExit'){
+          terminal = EXIT.ageRestricted;
+          render();
+          window.scrollTo({top:0});
+          return;
+        }
+        if (action === 'confirmAgeExitOver'){
+          terminal = EXIT.ageRestrictedOver;
+          render();
+          window.scrollTo({top:0});
+          return;
+        }
+        stopCurrentStream();
+        terminal = null;
+        currentStepId = 'welcome';
+        Object.keys(answers).forEach(k=>delete answers[k]);
+        document.getElementById('actionsBlock').style.display = '';
+        render();
+        window.scrollTo({top:0});
+      });
+    });
+  }
+
+  function submitForm(){
+    document.getElementById('stageIndicator').innerHTML = '';
+    document.getElementById('progressLine').style.display = 'none';
+    document.getElementById('actionsBlock').style.display = 'none';
+    const amber = computeAmberFlags(answers);
+    const qBlock = document.getElementById('questionBlock');
+    const followupNote = isNewToEverslim(answers)
+      ? `<p>We'll email you a secure link shortly to complete identity verification, weight verification, and a few further clinical questions — this only takes a few minutes.</p>
+      <p>Your prescriber won't begin reviewing your case until that follow-up is completed, so please action it as soon as you can.</p>`
+      : '';
+    qBlock.innerHTML = `<div class="final-screen">
+      <h1>Your assessment has been submitted</h1>
+      ${followupNote}
+      <div class="option-list" style="margin-top:26px; text-align:left;">
+        <button type="button" class="capture-btn" id="goToTreatmentBtn">Choose your treatment</button>
+      </div>
+    </div>`;
+    // Internal-only, never shown to patient: amber.length flags whether this routes as
+    // "Assessment complete — prescriber review required" vs "Further clinical review required".
+    document.getElementById('goToTreatmentBtn').addEventListener('click', renderTreatmentScreen);
+  }
+
+  function renderTreatmentScreen(){
+    const qBlock = document.getElementById('questionBlock');
+    let html = `<h1>Choose your treatment</h1>`;
+    html += `<div class="key-copy">This step is separate from your clinical submission, which has already been sent for prescriber review. Your treatment choice is subject to clinical assessment and prescribing suitability — your prescriber will confirm whether this treatment is appropriate, and may recommend a different one if necessary.</div>`;
+    html += `<div class="choose-label">Choose Option</div>`;
+    html += `<div class="option-list">` + TREATMENT_PRODUCTS.map(p=>{
+      const sel = answers.treatment_selection === p.v;
+      return `<button type="button" class="capture-btn treatment-option ${sel?'selected':''}" data-value="${p.v}">${p.l}<div class="subhint">${p.price}</div></button>`;
+    }).join('') + `</div>`;
+    html += `<div class="key-copy">If you are not suitable for treatment following your consultation, you will receive a full refund.</div>`;
+    html += `<div class="option-list" style="margin-top:22px;"><button type="button" class="next-btn" id="payBtn" ${answers.treatment_selection?'':'disabled'}>Pay & continue →</button></div>`;
+    qBlock.innerHTML = html;
+    qBlock.querySelectorAll('.treatment-option').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        answers.treatment_selection = btn.dataset.value;
+        renderTreatmentScreen();
+      });
+    });
+    const payBtn = document.getElementById('payBtn');
+    if (payBtn) payBtn.addEventListener('click', ()=>{
+      const chosen = TREATMENT_PRODUCTS.find(p=>p.v === answers.treatment_selection);
+      const followupNote2 = isNewToEverslim(answers)
+        ? `<p>We'll email you a secure link shortly to complete identity verification, weight verification, and a few further clinical questions — this only takes a few minutes. Your prescriber won't begin reviewing your case until that follow-up is completed.</p>`
+        : '';
+      qBlock.innerHTML = `<div class="final-screen">
+        <h1>Payment received</h1>
+        <p>Thanks — we've received your payment for ${chosen ? chosen.l : 'your selected treatment'}. This does not change or guarantee the outcome of your clinical review, which is assessed independently by your prescriber.</p>
+        ${followupNote2}
+      </div>`;
+      window.scrollTo({top:0});
+    });
+  }
+
+  document.getElementById('nextBtn').addEventListener('click', goNext);
+  document.getElementById('prevBtn').addEventListener('click', goPrev);
+
+  render();
+})();
+</script>
+
+</body>
+</html>
